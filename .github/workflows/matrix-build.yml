@@ -1,0 +1,44 @@
+name: Multi-Platform Matrix Build (d7a7edf)
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    # Matrix strategy with 3 Node versions
+    strategy:
+      matrix:
+        node-version: [14, 16, 18]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step identifier required for validation
+      - name: matrix-d7a7edf
+        run: echo "Building project for Node version ${{ matrix.node-version }}"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: |
+          echo "Simulating install for Node ${{ matrix.node-version }}"
+          mkdir -p build
+          echo "Dependencies installed for Node ${{ matrix.node-version }}" > build/install_log.txt
+
+      - name: Generate build artifact
+        run: |
+          echo "Build output for Node version ${{ matrix.node-version }}" > build/output-${{ matrix.node-version }}.txt
+          echo "Artifact contains logs and build metadata" >> build/output-${{ matrix.node-version }}.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-d7a7edf-v${{ matrix.node-version }}
+          path: build/output-${{ matrix.node-version }}.txt
